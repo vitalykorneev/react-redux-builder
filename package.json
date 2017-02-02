@@ -1,0 +1,19 @@
+{
+  "name": "react-redux-builder",
+  "version": "0.0.1",
+  "description": "This tool help you easy create components from your terminal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitalykorneev/react-redux-builder.git"
+  },
+  "author": "Vitaly Korneev",
+  "license": "ISC",
+  "dependencies": {
+    "handlebars": "^4.0.6",
+    "commander": "^2.9.0"
+  }
+}
