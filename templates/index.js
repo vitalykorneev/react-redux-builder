@@ -12,6 +12,9 @@ const templates = {
       name,
       type: 'containers'
     });
+  },
+  action: (name) => {
+    helper.createAction(name);
   }
 };
 
