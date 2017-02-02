@@ -8,6 +8,7 @@ const indexComponent = require(path.resolve('templates/indexComponent'));
 const indexCollection = require(path.resolve('templates/indexCollection'));
 const indexActionsCollectionTemplate = require(path.resolve('templates/indexActionsCollectionTemplate'));
 const action = require(path.resolve('templates/action'));
+const reducer = require(path.resolve('templates/reducer'));
 const constant = require(path.resolve('templates/constant'));
 const indexFile = `index.${config.jsExt}`;
 
@@ -124,6 +125,39 @@ const helper = {
         fs.writeFile(actionPath, template, err => {
           if (err) throw err;
           console.log('\x1b[32m',`Constant <${name}> created successful.`);
+        })
+      })
+    })
+  },
+  createReducer: (name) => {
+    const dirPath = path.resolve([output.path, output['reducers']].join('/'));
+    const actionPath = [dirPath, `${name}Reducer.${config.jsExt}`].join('/');
+
+    fs.stat(dirPath, (err, stats) => {
+      if (err) {
+        console.log('\x1b[31m',`Error: No such file or directory ${dirPath}.`);
+        return
+      }
+
+      fs.stat(actionPath, (err, stats) => {
+        if (!err) {
+          console.log('\x1b[31m',`Error: File ${actionPath} already exist.`);
+          return
+        }
+
+        const template = Handlebars.compile(reducer)({ name });
+        // const indexCollectionTemplate = Handlebars.compile(indexRedusersCollectionTemplate)({ name });
+
+        fs.writeFile(actionPath, template, err => {
+          if (err) throw err;
+          console.log('\x1b[32m',`Reducer <${name}> created successful.`);
+          helper.createAction(name);
+
+          // fs.appendFile([dirPath, indexFile].join('/'), indexCollectionTemplate, function (err) {
+          //   if (err) throw err;
+          //   helper.createConstant(name);
+          //   console.log('\x1b[32m',`Reducer <${name}> created successful.`);
+          // });
         })
       })
     })

@@ -1,4 +1,4 @@
-const component = `// {{name}}
+const action = `// {{name}}
 import * as actionTypes from '../constants/{{name}}Constants'
 
 export function action() {
@@ -10,4 +10,4 @@ export function action() {
 }
 `;
 
-module.exports = component;
+module.exports = action;

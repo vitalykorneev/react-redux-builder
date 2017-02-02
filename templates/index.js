@@ -15,6 +15,9 @@ const templates = {
   },
   action: (name) => {
     helper.createAction(name);
+  },
+  reducer: (name) => {
+    helper.createReducer(name);
   }
 };
 
