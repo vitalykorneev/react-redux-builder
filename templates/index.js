@@ -13,7 +13,10 @@ const templates = {
       type: 'containers'
     });
   },
-  action: (name) => {
+  action: (name, parent) => {
+    if (typeof parent === 'string') {
+      return helper.createActionReducer(name, parent);
+    }
     helper.createAction(name);
   },
   reducer: (name) => {

@@ -8,9 +8,13 @@ const indexComponent = require(path.resolve('templates/indexComponent'));
 const indexCollection = require(path.resolve('templates/indexCollection'));
 const indexActionsCollectionTemplate = require(path.resolve('templates/indexActionsCollectionTemplate'));
 const action = require(path.resolve('templates/action'));
+const actionItem = require(path.resolve('templates/actionItem'));
 const reducer = require(path.resolve('templates/reducer'));
+const reducerItem = require(path.resolve('templates/reducerItem'));
 const constant = require(path.resolve('templates/constant'));
+const constantItem = require(path.resolve('templates/constantItem'));
 const indexFile = `index.${config.jsExt}`;
+const stringSearcher = require('string-search');
 
 const helper = {
   createComponent: (opts) => {
@@ -160,6 +164,47 @@ const helper = {
           // });
         })
       })
+    })
+  },
+  createActionReducer: (name, parent) => {
+    const dirPath = path.resolve([output.path, output['reducers']].join('/'));
+    const actionDirPath = path.resolve([output.path, output['actions']].join('/'));
+    const constantsDirPath = path.resolve([output.path, output['constants']].join('/'));
+    const reduserPath = [dirPath, `${parent}Reducer.js`].join('/');
+    const actionPath = [actionDirPath, `${parent}Action.js`].join('/');
+    const constantPath = [constantsDirPath, `${parent}Constants.${config.jsExt}`].join('/');
+    console.log(constantPath);
+
+    const constantTemplate = Handlebars.compile(constantItem)({ actionType: name.toUpperCase() });
+    const actionTemplate = Handlebars.compile(actionItem)({ name, actionType: name.toUpperCase() });
+
+    fs.appendFile(constantPath, constantTemplate, function (err) {
+      if (err) throw err;
+      console.log('\x1b[32m',`Constant <${name.toUpperCase()}> created successful.`);
+    });
+    fs.appendFile(actionPath, actionTemplate, function (err) {
+      if (err) throw err;
+      console.log('\x1b[32m',`Action <${name}> created successful.`);
+    });
+
+    fs.readFile(reduserPath, 'utf8', function(err, data){
+      if (err) {
+        return console.log(err);
+      }
+      stringSearcher.find(data, 'default:')
+      .then(function(resultArr) {
+        if (!resultArr.length) return;
+        var lineNumber = resultArr[0].line - 1
+        // var data = fs.readFileSync('file.txt').toString().split("\n");
+        const template = Handlebars.compile(reducerItem)({ name: name.toUpperCase() });
+        data = data.toString().split("\n");
+        data.splice(lineNumber, 0, template);
+        var text = data.join("\n");
+
+        fs.writeFile(reduserPath, text, function (err) {
+          if (err) return console.log(err);
+        });
+      });
     })
   }
 };

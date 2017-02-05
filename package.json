@@ -13,7 +13,8 @@
   "author": "Vitaly Korneev",
   "license": "ISC",
   "dependencies": {
+    "commander": "^2.9.0",
     "handlebars": "^4.0.6",
-    "commander": "^2.9.0"
+    "string-search": "^1.2.0"
   }
 }
