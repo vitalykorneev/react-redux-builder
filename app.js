@@ -19,12 +19,12 @@ commander
       templates.container(name);
       return;
     }
-    if (options.action) {
-      templates.action(name, options.action);
-      return;
-    }
     if (options.reducer) {
       templates.reducer(name);
+      return;
+    }
+    if (options.action) {
+      templates.action(name, options.action);
       return;
     }
   });

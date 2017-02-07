@@ -11,6 +11,8 @@ const action = require(path.resolve('templates/action'));
 const actionItem = require(path.resolve('templates/actionItem'));
 const reducer = require(path.resolve('templates/reducer'));
 const reducerItem = require(path.resolve('templates/reducerItem'));
+const combineReducers = require(path.resolve('templates/combineReducers'));
+const combineReducersItem = require(path.resolve('templates/combineReducersItem'));
 const constant = require(path.resolve('templates/constant'));
 const constantItem = require(path.resolve('templates/constantItem'));
 const indexFile = `index.${config.jsExt}`;
@@ -128,14 +130,16 @@ const helper = {
 
         fs.writeFile(actionPath, template, err => {
           if (err) throw err;
-          console.log('\x1b[32m',`Constant <${name}> created successful.`);
+          console.log('\x1b[32m',`Constant <${name.toUpperCase()}> created successful.`);
         })
       })
     })
   },
   createReducer: (name) => {
     const dirPath = path.resolve([output.path, output['reducers']].join('/'));
-    const actionPath = [dirPath, `${name}Reducer.${config.jsExt}`].join('/');
+    const reducerName = `${name}Reducer`;
+    const actionPath = [dirPath, `${reducerName}.${config.jsExt}`].join('/');
+    const indexReducer = [dirPath, indexFile].join('/');
 
     fs.stat(dirPath, (err, stats) => {
       if (err) {
@@ -151,18 +155,62 @@ const helper = {
 
         const template = Handlebars.compile(reducer)({ name });
         // const indexCollectionTemplate = Handlebars.compile(indexRedusersCollectionTemplate)({ name });
-
         fs.writeFile(actionPath, template, err => {
           if (err) throw err;
           console.log('\x1b[32m',`Reducer <${name}> created successful.`);
           helper.createAction(name);
-
-          // fs.appendFile([dirPath, indexFile].join('/'), indexCollectionTemplate, function (err) {
-          //   if (err) throw err;
-          //   helper.createConstant(name);
-          //   console.log('\x1b[32m',`Reducer <${name}> created successful.`);
-          // });
         })
+
+        // Combine Reducers
+        fs.stat(indexReducer, (err, stats) => {
+          if (err) {
+            const indexReducerTemplate = Handlebars.compile(combineReducers)({ name: `${reducerName}` });
+            fs.writeFile(indexReducer, indexReducerTemplate, err => {
+
+            })
+            return
+          }
+
+          fs.readFile(indexReducer, 'utf8', function(err, data){
+            if (err) {
+              return console.log(err);
+            }
+
+            stringSearcher.find(data, 'routing:')
+            .then(function(resultArr) {
+              if (!resultArr.length) return;
+              var lineNumber = resultArr[0].line - 1;
+              data = data.toString().split("\n");
+              data.splice(lineNumber, 0, `  ${reducerName},`);
+              var text = data.join("\n");
+
+              fs.writeFile(indexReducer, text, function (err) {
+                if (err) return console.log(err);
+
+                fs.readFile(indexReducer, 'utf8', function(err, data){
+                  if (err) {
+                    return console.log(err);
+                  }
+                  
+                  const indexReducerItemTemplate = Handlebars.compile(combineReducersItem)({ name: `${reducerName}` });
+
+                  stringSearcher.find(data, 'const rootReducer')
+                  .then(function(resultArr) {
+                    if (!resultArr.length) return;
+                    var lineNumber = resultArr[0].line - 1;
+                    data = data.toString().split("\n");
+                    data.splice(lineNumber, 0, indexReducerItemTemplate);
+                    var text = data.join("\n");
+
+                    fs.writeFile(indexReducer, text, function (err) {
+                      if (err) return console.log(err);
+                    });
+                  });
+                })
+              });
+            });
+          })
+        });
       })
     })
   },
@@ -182,7 +230,7 @@ const helper = {
 
     fs.appendFile(constantPath, constantTemplate, function (err) {
       if (err) throw err;
-      console.log('\x1b[32m',`Constant <${name.toUpperCase()}> created successful.`);
+      console.log('\x1b[32m',`Constant <${actionType}> created successful.`);
     });
     fs.appendFile(actionPath, actionTemplate, function (err) {
       if (err) throw err;
@@ -196,8 +244,7 @@ const helper = {
       stringSearcher.find(data, 'default:')
       .then(function(resultArr) {
         if (!resultArr.length) return;
-        var lineNumber = resultArr[0].line - 1
-        // var data = fs.readFileSync('file.txt').toString().split("\n");
+        var lineNumber = resultArr[0].line - 1;
         const template = Handlebars.compile(reducerItem)({ actionType });
         data = data.toString().split("\n");
         data.splice(lineNumber, 0, template);
