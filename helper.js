@@ -173,10 +173,12 @@ const helper = {
     const reduserPath = [dirPath, `${parent}Reducer.js`].join('/');
     const actionPath = [actionDirPath, `${parent}Action.js`].join('/');
     const constantPath = [constantsDirPath, `${parent}Constants.${config.jsExt}`].join('/');
-    console.log(constantPath);
 
-    const constantTemplate = Handlebars.compile(constantItem)({ actionType: name.toUpperCase() });
-    const actionTemplate = Handlebars.compile(actionItem)({ name, actionType: name.toUpperCase() });
+    let actionType = name.replace(/([A-Z])/g, '_$1');
+    actionType = actionType.toUpperCase();
+
+    const constantTemplate = Handlebars.compile(constantItem)({ actionType });
+    const actionTemplate = Handlebars.compile(actionItem)({ name, actionType });
 
     fs.appendFile(constantPath, constantTemplate, function (err) {
       if (err) throw err;
@@ -196,7 +198,7 @@ const helper = {
         if (!resultArr.length) return;
         var lineNumber = resultArr[0].line - 1
         // var data = fs.readFileSync('file.txt').toString().split("\n");
-        const template = Handlebars.compile(reducerItem)({ name: name.toUpperCase() });
+        const template = Handlebars.compile(reducerItem)({ actionType });
         data = data.toString().split("\n");
         data.splice(lineNumber, 0, template);
         var text = data.join("\n");

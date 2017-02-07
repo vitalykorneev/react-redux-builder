@@ -1,5 +1,5 @@
-const reducerItem = ` // {{name}}
-    case actionTypes.{{name}}: {
+const reducerItem = ` // {{actionType}}
+    case actionTypes.{{actionType}}: {
       return {
         ...state
       }
