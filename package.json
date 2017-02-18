@@ -1,6 +1,6 @@
 {
   "name": "react-redux-builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "This tool help you easy create components from your terminal",
   "main": "app.js",
   "scripts": {
