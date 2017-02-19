@@ -5,8 +5,8 @@ export function action() {
   return (dispatch) => {
     dispatch({
       type: actionTypes.ACTION_TYPE
-    })
-  }
+    });
+  };
 }
 `;
 
