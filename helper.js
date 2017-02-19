@@ -81,7 +81,7 @@ const helper = {
   },
   createAction: (name) => {
     const dirPath = path.resolve([output.path, output['actions']].join('/'));
-    const actionPath = [dirPath, `${name}Action.${config.jsExt}`].join('/');
+    const actionPath = [dirPath, `${name}Actions.${config.jsExt}`].join('/');
 
     fs.stat(dirPath, (err, stats) => {
       if (err) {
@@ -219,7 +219,7 @@ const helper = {
     const actionDirPath = path.resolve([output.path, output['actions']].join('/'));
     const constantsDirPath = path.resolve([output.path, output['constants']].join('/'));
     const reduserPath = [dirPath, `${parent}Reducer.js`].join('/');
-    const actionPath = [actionDirPath, `${parent}Action.js`].join('/');
+    const actionPath = [actionDirPath, `${parent}Actions.js`].join('/');
     const constantPath = [constantsDirPath, `${parent}Constants.${config.jsExt}`].join('/');
 
     let actionType = name.replace(/([A-Z])/g, '_$1');
